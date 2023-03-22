@@ -14,7 +14,7 @@ conn = sqlite3.connect('sinyal.db', check_same_thread=False)
 conn.row_factory = sqlite3.Row
 cursor = conn.cursor()
 
-client = Client("", "")
+client = Client("UHgf6UUC7KeDjBI8DnHebqN4abGWvuYW2yPyPyqsNRl59kxHQxCkZXarnfCOOMl8", "kzXsvytUsiZWkmItnGDBaGBfidSX4faSShRo45wBuAmhBV8vYO4wBpR1lTlbJmc3")
 
 
 def zamanHesapla(zaman):
@@ -57,8 +57,12 @@ def append_list_as_row(file_name, list_of_elem):
 
 
 def veriEkleme(coin, zaman):
-    a = verileriGetir(coin, Client.KLINE_INTERVAL_15MINUTE, zaman, "17 August 2030")
-    return a
+    try:
+        a = verileriGetir(coin, Client.KLINE_INTERVAL_15MINUTE, zaman, "17 August 2030")
+        return a
+    except Exception as E:
+        print(E)
+        time.sleep(5)
     # print(coin+" verileri getirildi")
 
 
@@ -333,7 +337,11 @@ def veriYaz():
 
                 # csv kayıT
             # son kaydıda ramdeki degere ekle
-            eklenecekMum = yeniVeriler[i]
+            try:
+                eklenecekMum = yeniVeriler[i]
+            except Exception as E:
+                print(E)
+                time.sleep(2)
             # print(f"eklenecekMum {eklenecekMum}")
             dataFrameMumSayisi = (len(df))
             df.loc[dataFrameMumSayisi] = eklenecekMum
