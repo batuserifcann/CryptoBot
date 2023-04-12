@@ -23,7 +23,7 @@ def zamanHesapla(zaman):
     return dt.fromtimestamp(zamanEpoch)
 
 
-semboller = ["BTCUSDT", "ETHUSDT", "BNBUSDT",]
+semboller = ["BTCUSDT", "ETHUSDT", "BNBUSDT","DOGEUSDT","ANTUSDT","MANAUSDT","DOTUSDT","1INCHUSDT","ADAUSDT","XRPUSDT","AVAXUSDT","SOLUSDT"]
 
 
 def verileriGetir(sembol, periyot, baslangic, bitis):
@@ -309,7 +309,7 @@ def veriYaz():
             basliklar = ["open_time", "open", "high", "low", "close", "vol", "close_time", "qav", "nat", "tbbav",
                          "tbqav",
                          "ignore"]
-            df = pd.read_csv(okunacakCsv, names=basliklar, index_col=False)
+            df = pd.read_csv(okunacakCsv, names=basliklar, index_col=False,on_bad_lines='skip')
             # print(f"df:{df}")
             dataFrameMumSayisi = (len(df))
             sonMum = df.iloc[-1]
@@ -319,7 +319,11 @@ def veriYaz():
 
             # print(len(yeniVeriler))
             i = 0
-            veriSayi = len(yeniVeriler)
+            try:
+                veriSayi = len(yeniVeriler)
+            except Exception as e:
+                print(e)
+                time.sleep(5)
             while veriSayi > 1:
                 eklenecekMum = yeniVeriler[i]
                 # df.append(eklenecekMum, ignore_index = True)
