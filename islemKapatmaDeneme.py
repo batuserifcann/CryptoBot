@@ -37,7 +37,7 @@ for symbol in semboller:
         print("order created")
     except Exception as e:
         print(e)
-    time.sleep(5)
+        time.sleep(5)
     #### İŞLEM KAPATMA
     try:
         order = client.futures_create_order(
