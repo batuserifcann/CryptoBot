@@ -130,37 +130,39 @@ def alphaTrend_DF(df):  # CSV şeklinde gelen parite verileri
     k1 = []
     k2 = []
     mfi = ta.mfi(high, low, close, volume, 14)
-    for i in range(len(close)):
-        hlc3.append((high[i] + low[i] + close[i]) / 3)
+    try:
+        for i in range(len(close)):
+            hlc3.append((high[i] + low[i] + close[i]) / 3)
 
-    for i in range(len(low)):
-        if pd.isna(atr[i]):
-            upt.append(0)
-        else:
-            upt.append(low[i] - (atr[i] * coeff))
-    for i in range(len(high)):
-        if pd.isna(atr[i]):
-            downT.append(0)
-        else:
-            downT.append(high[i] + (atr[i] * coeff))
-    for i in range(1, len(close)):
-        if noVolumeData is True and rsi[i] >= 50:
-            if upt[i] < AlphaTrend[i - 1]:
-                AlphaTrend.append(AlphaTrend[i - 1])
+        for i in range(len(low)):
+            if pd.isna(atr[i]):
+                upt.append(0)
             else:
-                AlphaTrend.append(upt[i])
+                upt.append(low[i] - (atr[i] * coeff))
+        for i in range(len(high)):
+            if pd.isna(atr[i]):
+                downT.append(0)
+            else:
+                downT.append(high[i] + (atr[i] * coeff))
+        for i in range(1, len(close)):
+            if noVolumeData is True and rsi[i] >= 50:
+                if upt[i] < AlphaTrend[i - 1]:
+                    AlphaTrend.append(AlphaTrend[i - 1])
+                else:
+                    AlphaTrend.append(upt[i])
 
-        elif noVolumeData is False and mfi[i] >= 50:
-            if upt[i] < AlphaTrend[i - 1]:
-                AlphaTrend.append(AlphaTrend[i - 1])
+            elif noVolumeData is False and mfi[i] >= 50:
+                if upt[i] < AlphaTrend[i - 1]:
+                    AlphaTrend.append(AlphaTrend[i - 1])
+                else:
+                    AlphaTrend.append(upt[i])
             else:
-                AlphaTrend.append(upt[i])
-        else:
-            if downT[i] > AlphaTrend[i - 1]:
-                AlphaTrend.append(AlphaTrend[i - 1])
-            else:
-                AlphaTrend.append(downT[i])
-
+                if downT[i] > AlphaTrend[i - 1]:
+                    AlphaTrend.append(AlphaTrend[i - 1])
+                else:
+                    AlphaTrend.append(downT[i])
+    except Exception as e:
+        print(e)
     for i in range(len(AlphaTrend)):
         if i < 2:
             k2.append(0)
@@ -230,29 +232,26 @@ def trendHesapla_DF(df, coin):
         yazDiziSira = "Son Mum" if i == diziBoyu else f"{(diziBoyu - i)} mum once"
         if k1[i - 1] <= k2[i - 1] and k1[i] > k2[i] and k2[i] > 0 and sinyalSirasi[-1] != "a":
             # mesaj = f"{coinAd} AL SİNYALİ GELDİ\nFiyat : {dataFiyat['price']}\nRSI14 : {rsi[i]}\nMFI : {mfi[i]}\nZaman :  {zamanHesapla(acilisZamani[i])} "
-            try:
-                ticker = client.futures_symbol_ticker(symbol=coinAd)
-                last_price = float(ticker['price'])
-                if coinAd == "BTCUSDT":
-                    quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
-                    print(f"{coinAd} : {quantity}")
-                elif coinAd == "ETHUSDT" or coinAd == "BNBUSDT":
-                    quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
-                    print(f"{coinAd} : {quantity}")
-                else:
-                    quantity = round(usdtEnter/last_price) # 3 ondalık hane
-                    print(f"{coinAd} : {quantity}")
-                try:
         
-                    order = client.futures_create_order(
-                        symbol=symbol,
-                        side='BUY',
-                        type='MARKET',
-                        quantity=quantity)
-                    print(f"{coinAd} order created")
-                except Exception as e:
-                    print(e)
-                    time.sleep(5)
+            ticker = client.futures_symbol_ticker(symbol=coinAd)
+            last_price = float(ticker['price'])
+            if coinAd == "BTCUSDT":
+                quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
+                print(f"{coinAd} : {quantity}")
+            elif coinAd == "ETHUSDT" or coinAd == "BNBUSDT":
+                quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
+                print(f"{coinAd} : {quantity}")
+            else:
+                quantity = round(usdtEnter/last_price) # 3 ondalık hane
+                print(f"{coinAd} : {quantity}")
+            try:
+    
+                order = client.futures_create_order(
+                    symbol=coinAd,
+                    side='BUY',
+                    type='MARKET',
+                    quantity=quantity)
+                print(f"{coinAd} order created")
             except Exception as e:
                 print(e)
                 time.sleep(5)
@@ -321,32 +320,29 @@ def veriYaz():
             beklentiFiyat = float(pariteAliBilgi["alis_fiyat"]) * 1.01
             print(f"pariteAnlikFiyat: {pariteAnlikFiyat} - beklentiFiyat: {beklentiFiyat}")
             if pariteAnlikFiyat >= beklentiFiyat:
+            
+                ticker = client.futures_symbol_ticker(symbol=coin)
+                last_price = float(ticker['price'])
+                
+                print(last_price)
+                if coin == "BTCUSDT":
+                    quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
+                    print(f"{coin} : {quantity}")
+                elif coin == "ETHUSDT" or coin == "BNBUSDT":
+                    quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
+                    print(f"{coin} : {quantity}")
+                else:
+                    quantity = round(usdtEnter/last_price) # 3 ondalık hane
+                    print(f"{coin} : {quantity}")
                 try:
-                    ticker = client.futures_symbol_ticker(symbol=coin)
-                    last_price = float(ticker['price'])
-                    
-                    print(last_price)
-                    if coin == "BTCUSDT":
-                        quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
-                        print(f"{coin} : {quantity}")
-                    elif coin == "ETHUSDT" or coin == "BNBUSDT":
-                        quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
-                        print(f"{coin} : {quantity}")
-                    else:
-                        quantity = round(usdtEnter/last_price) # 3 ondalık hane
-                        print(f"{coin} : {quantity}")
-                    try:
-                        order = client.futures_create_order(
-                        symbol=coin,
-                        side='SELL',
-                        type='MARKET',
-                        quantity=quantity)
-                        print("order closed")
-                    except Exception as e:
-                        print(e)
+                    order = client.futures_create_order(
+                    symbol=coin,
+                    side='SELL',
+                    type='MARKET',
+                    quantity=quantity)
+                    print("order closed")
                 except Exception as e:
                     print(e)
-                    time.sleep(1)
                 print("satış işlemini gerçekleştir")
                 values = {
                     'parite': coin, 'satis_zamani': str(time.time()), 'satis_fiyat': pariteAnlikFiyat,
