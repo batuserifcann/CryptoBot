@@ -233,28 +233,28 @@ def trendHesapla_DF(df, coin):
         if k1[i - 1] <= k2[i - 1] and k1[i] > k2[i] and k2[i] > 0 and sinyalSirasi[-1] != "a":
             # mesaj = f"{coinAd} AL SİNYALİ GELDİ\nFiyat : {dataFiyat['price']}\nRSI14 : {rsi[i]}\nMFI : {mfi[i]}\nZaman :  {zamanHesapla(acilisZamani[i])} "
         
-            ticker = client.futures_symbol_ticker(symbol=coinAd)
-            last_price = float(ticker['price'])
-            if coinAd == "BTCUSDT":
-                quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
-                print(f"{coinAd} : {quantity}")
-            elif coinAd == "ETHUSDT" or coinAd == "BNBUSDT":
-                quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
-                print(f"{coinAd} : {quantity}")
-            else:
-                quantity = round(usdtEnter/last_price) # 3 ondalık hane
-                print(f"{coinAd} : {quantity}")
-            try:
+            # ticker = client.futures_symbol_ticker(symbol=coinAd)
+            # last_price = float(ticker['price'])
+            # if coinAd == "BTCUSDT":
+            #     quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
+            #     print(f"{coinAd} : {quantity}")
+            # elif coinAd == "ETHUSDT" or coinAd == "BNBUSDT":
+            #     quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
+            #     print(f"{coinAd} : {quantity}")
+            # else:
+            #     quantity = round(usdtEnter/last_price) # 3 ondalık hane
+            #     print(f"{coinAd} : {quantity}")
+            # try:
     
-                order = client.futures_create_order(
-                    symbol=coinAd,
-                    side='BUY',
-                    type='MARKET',
-                    quantity=quantity)
-                print(f"{coinAd} order created")
-            except Exception as e:
-                print(e)
-                time.sleep(5)
+            #     order = client.futures_create_order(
+            #         symbol=coinAd,
+            #         side='BUY',
+            #         type='MARKET',
+            #         quantity=quantity)
+            #     print(f"{coinAd} order created")
+            # except Exception as e:
+            #     print(e)
+            #     time.sleep(5)
             try:
                 values = {
                     'parite': coinAd, 'alis_zamani': str(acilisZamani[i]), 'alis_fiyat': dataFiyat['price'],
@@ -268,8 +268,8 @@ def trendHesapla_DF(df, coin):
                 )
                 # print(acilisZamani[i])
                 print("EKLEME YAPILDI ----------------")
-                telegramMesaj = f"{coinAd} alım yapıldı.\nFiyat : {dataFiyat['price']}"
-                telegramMesajYolla(telegramMesaj)
+                # telegramMesaj = f"{coinAd} alım yapıldı.\nFiyat : {dataFiyat['price']}"
+                # telegramMesajYolla(telegramMesaj)
                 conn.commit()
             except Exception as e:
                 print(e)
@@ -317,32 +317,33 @@ def veriYaz():
             except Exception as E:
                 print(f"parite fiyatı alınamadı {E}")
                 pariteAnlikFiyat = 0
-            beklentiFiyat = float(pariteAliBilgi["alis_fiyat"]) * 1.01
-            print(f"pariteAnlikFiyat: {pariteAnlikFiyat} - beklentiFiyat: {beklentiFiyat}")
-            if pariteAnlikFiyat >= beklentiFiyat:
+            beklentiFiyatTp = float(pariteAliBilgi["alis_fiyat"]) * 1.01
+            beklentiFiyatSl = float(pariteAliBilgi["alis_fiyat"]) * 0.98
+            print(f"pariteAnlikFiyat: {pariteAnlikFiyat} - beklentiFiyat: {beklentiFiyatTp} - stoploss{beklentiFiyatSl}")
+            if pariteAnlikFiyat >= beklentiFiyatTp:
             
-                ticker = client.futures_symbol_ticker(symbol=coin)
-                last_price = float(ticker['price'])
+                # ticker = client.futures_symbol_ticker(symbol=coin)
+                # last_price = float(ticker['price'])
                 
-                print(last_price)
-                if coin == "BTCUSDT":
-                    quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
-                    print(f"{coin} : {quantity}")
-                elif coin == "ETHUSDT" or coin == "BNBUSDT":
-                    quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
-                    print(f"{coin} : {quantity}")
-                else:
-                    quantity = round(usdtEnter/last_price) # 3 ondalık hane
-                    print(f"{coin} : {quantity}")
-                try:
-                    order = client.futures_create_order(
-                    symbol=coin,
-                    side='SELL',
-                    type='MARKET',
-                    quantity=quantity)
-                    print("order closed")
-                except Exception as e:
-                    print(e)
+                # print(last_price)
+                # if coin == "BTCUSDT":
+                #     quantity = round(usdtEnter/last_price, 3) # 3 ondalık hane
+                #     print(f"{coin} : {quantity}")
+                # elif coin == "ETHUSDT" or coin == "BNBUSDT":
+                #     quantity = round(usdtEnter/last_price, 2) # 3 ondalık hane
+                #     print(f"{coin} : {quantity}")
+                # else:
+                #     quantity = round(usdtEnter/last_price) # 3 ondalık hane
+                #     print(f"{coin} : {quantity}")
+                # try:
+                #     order = client.futures_create_order(
+                #     symbol=coin,
+                #     side='SELL',
+                #     type='MARKET',
+                #     quantity=quantity)
+                #     print("order closed")
+                # except Exception as e:
+                #     print(e)
                 print("satış işlemini gerçekleştir")
                 values = {
                     'parite': coin, 'satis_zamani': str(time.time()), 'satis_fiyat': pariteAnlikFiyat,
@@ -352,14 +353,26 @@ def veriYaz():
                     f"UPDATE sinyal_takip SET satis_zamani = ?, satis_fiyat = ?, satis_rsi = ?, satis_mfi = ?  WHERE parite = '{coin}' and satis_zamani is NULL",
                     (str(time.time()), pariteAnlikFiyat, 0, 0))
                 print("Güncelleme yapıldı")
-                telegramMesaj = f"{coin} satış yapıldı.\nFiyat : {pariteAnlikFiyat}"
-                telegramMesajYolla(telegramMesaj)
+                # telegramMesaj = f"{coin} satış yapıldı.\nFiyat : {pariteAnlikFiyat}"
+                # telegramMesajYolla(telegramMesaj)
+                conn.commit()
+            elif pariteAnlikFiyat <= beklentiFiyatSl:
+                values = {
+                    'parite': coin, 'satis_zamani': "000000000", 'satis_fiyat': pariteAnlikFiyat,
+                    'satis_rsi': 0, 'satis_mfi': 0
+                }
+                cursor.execute(
+                        f"UPDATE sinyal_takip SET satis_zamani = ?, satis_fiyat = ?, satis_rsi = ?, satis_mfi = ?  WHERE parite = '{coin}' and satis_zamani is NULL",
+                        ("0000000000", pariteAnlikFiyat, 0, 0))
+                print("Stop loss işlemi yapıldı")
+                # telegramMesaj = f"{coin} satış yapıldı.\nFiyat : {pariteAnlikFiyat}"
+                # telegramMesajYolla(telegramMesaj)
                 conn.commit()
 
             else:
                 print("satış işlemi için fırsat bekleniyor")
         else:
-            print("alış için fırsat bekleniyor")
+            # print("alış için fırsat bekleniyor")
 
             csvName = coin + ".csv"
             okunacakCsv = csvName
