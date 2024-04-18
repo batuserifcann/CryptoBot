@@ -1,8 +1,8 @@
 import requests
 from telegram.ext import Updater
 telegramBotChatID = "873908419"
-kanalId= "-1001741371381"
-telegramBotToken  = "5705765467:AAFDIKXIBkDK0qXz7q2cNxSLTKqKYLyksN8"
+kanalId= ""
+telegramBotToken  = ""
 
 updater = Updater(telegramBotToken, use_context=True)
 
